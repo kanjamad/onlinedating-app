@@ -2,6 +2,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const mongoose = require('mongoose');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -22,6 +23,13 @@ saveUninitialized: false,
 // BodyParser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+const DB_URL = process.env.MONGODB_URI || 'mongodb://localhost:27017/onlinedatingapp1';
+
+mongoose.connect(DB_URL, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: false })
+    .then(() => console.log('MongoDB connected...'))
+    .catch((err) => console.log(err));
+
 
 
 // ----------------------------- setup view engine --------------------------//
