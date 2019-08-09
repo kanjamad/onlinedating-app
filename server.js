@@ -29,17 +29,28 @@ app.set('view engine', 'handlebars');
 
 // GET Root Route
 app.get('/', (req,res)=> {
-    res.render('home');
+    res.render('home', {
+        title: 'Home'
+    });
 });
 
 // ----------------------------- API ENDPOINT ----------------------------- //
 
+
 app.get('/about', (req,res) => {
-    res.render('about');
+    res.render('about', {
+        title: 'About'
+    });
 });
 
 app.get('/contact', (req,res) => {
-    res.render('contact');
+    res.render('contact', {
+        title: 'Contact'
+    });
+});
+
+app.post('/contactUs', (req,res) => {
+    console.log(req.body);
 });
 
 
