@@ -3,22 +3,28 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Load models
 const Message = require('./models/message');
+const User = require('./models/user');
 
 
 
 // ----------------------------- MIDDLEWARE ----------------------------- //
 
 //  Express Session Config
+app.use(cookieParser());
 app.use(session({
-secret: process.env.SESSION_SECRET || 'Elephant poker championships',
-resave: false,
-saveUninitialized: false,
+secret: process.env.SESSION_SECRET || 'mysecret',
+resave: true,
+saveUninitialized: true,
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // BodyParser
 app.use(bodyParser.urlencoded({extended: false}));
