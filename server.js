@@ -26,6 +26,9 @@ saveUninitialized: true,
 app.use(passport.initialize());
 app.use(passport.session());
 
+// load facebook strategy
+require('./passport/facebook');
+
 // BodyParser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -66,6 +69,7 @@ app.get('/contact', (req,res) => {
     });
 });
 
+
 app.post('/contactUs',(req,res) => {
     console.log(req.body);
     const newMessage = {
@@ -94,6 +98,13 @@ app.post('/contactUs',(req,res) => {
     });
 });
 
+
+// ---------------------------- Auth ----------------------------------- //
+app.get('/auth/facebook',passport.authenticate('facebook'));
+app.get('/auth/facebook/callback',passport.authenticate('facebook',{
+    successRedirect: '/profile',
+    failureRedirect:'/'
+}));
 
 // ----------------------------- START SERVER ----------------------------- //
 
