@@ -5,6 +5,9 @@ const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Load models
+const Message = require('./models/message');
+
 
 
 // ----------------------------- MIDDLEWARE ----------------------------- //
@@ -49,8 +52,32 @@ app.get('/contact', (req,res) => {
     });
 });
 
-app.post('/contactUs', (req,res) => {
+app.post('/contactUs',(req,res) => {
     console.log(req.body);
+    const newMessage = {
+        fullname: req.body.fullname,
+        email: req.body.email,
+        message: req.body.message,
+        date: new Date()
+    }
+    new Message(newMessage).save((err,message) => {
+        if (err) {
+            throw err;
+        }else{
+            Message.find({}).then((messages) => {
+                if (messages) {
+                    res.render('newmessage', {
+                        title: 'Sent',
+                        messages:messages
+                    });
+                }else{
+                    res.render('noMessage',{
+                        title: 'Not Found'
+                    });
+                }
+            });
+        }
+    });
 });
 
 
