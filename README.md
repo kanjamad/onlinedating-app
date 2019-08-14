@@ -18,7 +18,7 @@ I will build automatic message from admin, so admin will send welcome message fo
 * passportjs
 * facebook
 
-### 
+### Auth Helpers
 Set up a helpers in order to make sure user is login. 
 If  user is not login.So we don't want to display the user's profile.
 
