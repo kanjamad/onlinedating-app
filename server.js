@@ -34,8 +34,9 @@ app.use((req,res, next) => {
     res.locals.user = req.user || null;
     next();
 });
-// load facebook strategy
+// load passport
 require('./passport/facebook');
+require('./passport/google');
 
 // BodyParser
 app.use(bodyParser.urlencoded({extended: false}));
@@ -126,10 +127,20 @@ app.post('/contactUs',(req,res) => {
 
 
 // ---------------------------- Auth ----------------------------------- //
+// facebook
 app.get('/auth/facebook',passport.authenticate('facebook',{
     scope: ['email']
 }));
 app.get('/auth/facebook/callback',passport.authenticate('facebook',{
+    successRedirect: '/profile',
+    failureRedirect: '/'
+}));
+
+// google
+app.get('/auth/google',passport.authenticate('google',{
+    scope: ['profile']
+}));
+app.get('/auth/google/callback',passport.authenticate('google',{
     successRedirect: '/profile',
     failureRedirect: '/'
 }));
