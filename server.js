@@ -11,6 +11,10 @@ const PORT = process.env.PORT || 3000;
 // Load models
 const Message = require('./models/message');
 const User = require('./models/user');
+// load keys file
+const Keys = require('./config/keys');
+// Load Helpers
+const {requireLogin,ensureGuest} = require('./helpers/auth');
 
 
 
@@ -52,7 +56,7 @@ app.set('view engine', 'handlebars');
 // ----------------------------- HTML ENDPOINT ----------------------------- //
 
 // GET Root Route
-app.get('/', (req,res)=> {
+app.get('/',ensureGuest,(req,res) => {
     res.render('home', {
         title: 'Home'
     });
@@ -61,33 +65,36 @@ app.get('/', (req,res)=> {
 // ----------------------------- API ENDPOINT ----------------------------- //
 
 
-app.get('/about', (req,res) => {
+app.get('/about',ensureGuest,(req,res) => {
     res.render('about', {
         title: 'About'
     });
 });
 
-app.get('/contact', (req,res) => {
+app.get('/contact',ensureGuest,(req,res) => {
     res.render('contact', {
         title: 'Contact'
     });
 });
 
-app.get('/logout',(req,res) => {
-    User.findById({_id:req.user._id})
-    .then((user) => {
-        user.online = false;
-        user.save((err,user) => {
-            if (err) {
-                throw err;
-            }
-            if (user) {
-                req.logout();
-                res.redirect('/');
-            }
-        })
-    })
+app.get('/profile',requireLogin,(req,res) => {
+    User.findById({_id:req.user._id}).then((user) => {
+        if (user) {
+            user.online = true;
+            user.save((err,user) => {
+                if (err) {
+                    throw err;
+                }else{
+                    res.render('profile', {
+                        title: 'Profile',
+                        user: user
+                    });
+                }
+            })
+        }
+    });
 });
+
 
 app.post('/contactUs',(req,res) => {
     console.log(req.body);
@@ -127,6 +134,21 @@ app.get('/auth/facebook/callback',passport.authenticate('facebook',{
     failureRedirect: '/'
 }));
 
+app.get('/logout',(req,res) => {
+    User.findById({_id:req.user._id})
+    .then((user) => {
+        user.online = false;
+        user.save((err,user) => {
+            if (err) {
+                throw err;
+            }
+            if (user) {
+                req.logout();
+                res.redirect('/');
+            }
+        })
+    })
+});
 
 // ----------------------------- START SERVER ----------------------------- //
 
