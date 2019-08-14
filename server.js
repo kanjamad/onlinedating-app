@@ -25,7 +25,11 @@ saveUninitialized: true,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-
+// Make user global object
+app.use((req,res, next) => {
+    res.locals.user = req.user || null;
+    next();
+});
 // load facebook strategy
 require('./passport/facebook');
 
@@ -69,6 +73,21 @@ app.get('/contact', (req,res) => {
     });
 });
 
+app.get('/logout',(req,res) => {
+    User.findById({_id:req.user._id})
+    .then((user) => {
+        user.online = false;
+        user.save((err,user) => {
+            if (err) {
+                throw err;
+            }
+            if (user) {
+                req.logout();
+                res.redirect('/');
+            }
+        })
+    })
+});
 
 app.post('/contactUs',(req,res) => {
     console.log(req.body);
@@ -100,11 +119,14 @@ app.post('/contactUs',(req,res) => {
 
 
 // ---------------------------- Auth ----------------------------------- //
-app.get('/auth/facebook',passport.authenticate('facebook'));
+app.get('/auth/facebook',passport.authenticate('facebook',{
+    scope: ['email']
+}));
 app.get('/auth/facebook/callback',passport.authenticate('facebook',{
     successRedirect: '/profile',
-    failureRedirect:'/'
+    failureRedirect: '/'
 }));
+
 
 // ----------------------------- START SERVER ----------------------------- //
 
