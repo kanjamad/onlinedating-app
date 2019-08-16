@@ -31,5 +31,6 @@ If  user is not login.So we don't want to display the user's profile.
 4. <a href="http://www.passportjs.org/packages/passport-google-oauth/" target="_blank">passport-google-oauth</a>
 5. <a href="https://github.com/jaredhanson/passport-google-oauth2" target="_blank">passport-google-oauth2.0</a>
 6. <a href="https://console.developers.google.com" target="_blank">Google API</a>
+7. <a href="http://expressjs.com/en/4x/api.html#express.static" target="_blank">express.static()</a>
 
 

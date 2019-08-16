@@ -34,6 +34,8 @@ app.use((req,res, next) => {
     res.locals.user = req.user || null;
     next();
 });
+// setup express static folder to serve js, css files
+app.use(express.static('public'));
 // load passport
 require('./passport/facebook');
 require('./passport/google');
@@ -96,6 +98,11 @@ app.get('/profile',requireLogin,(req,res) => {
     });
 });
 
+app.get('/newAccount',(req,res) => {
+    res.render('newAccount',{
+        title: 'Signup'
+    });
+});
 
 app.post('/contactUs',(req,res) => {
     console.log(req.body);
@@ -162,6 +169,77 @@ app.get('/logout',(req,res) => {
     })
 });
 
+// Signup
+app.post('/signup',(req,res) => {
+    //console.log(req.body);
+    let errors = [];
+
+    if (req.body.password !== req.body.password2) {
+        errors.push({text:'Password does Not match'});
+    }
+    if (req.body.password.length < 5) {
+        errors.push({text:'Password must be at least 5 characters'});
+    }
+    if (errors.length > 0) {
+        res.render('newAccount',{
+            errors: errors,
+            title: 'Error',
+            fullname: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            password2: req.body.password2
+        });
+    }else{
+        User.findOne({email:req.body.email})
+        .then((user) => {
+            if (user) {
+                let errors = [];
+                errors.push({text:'Email already exist'});
+                res.render('newAccount',{
+                    title:'Signup',
+                    errors:errors
+                })
+            }else{
+                var salt = bcrypt.genSaltSync(10);
+                var hash = bcrypt.hashSync(req.body.password, salt);
+
+                const newUser = {
+                    fullname: req.body.username,
+                    email: req.body.email,
+                    password: hash
+                }
+                new User(newUser).save((err,user) => {
+                    if (err) {
+                        throw err;
+                    }
+                    if (user) {
+                        let success = [];
+                        success.push({text:'You successfully created account. You can login now'});
+                        res.render('home',{
+                            success: success
+                        });
+                    }
+                });
+                
+            }
+        });
+    }
+});
+
+// Login
+app.post('/login',passport.authenticate('local',{
+    successRedirect:'/profile',
+    failureRedirect: '/loginErrors'
+}));
+
+// LoginErrors
+app.get('/loginErrors', (req,res) => {
+    let errors = [];
+    errors.push({text:'User Not found or Password Incorrect'});
+    res.render('home',{
+        errors:errors
+    });
+});
 // ----------------------------- START SERVER ----------------------------- //
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
