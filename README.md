@@ -28,4 +28,8 @@ If  user is not login.So we don't want to display the user's profile.
 1. <a href="https://developers.facebook.com/" target="_blank">facebookdeveloper.com</a>
 2. <a href="http://www.passportjs.org/" target="_blank">passportjs.org</a>
 3. <a href="https://developers.facebook.com/docs/graph-api/using-graph-api" target="_blank">Using the Graph API</a>
+4. <a href="http://www.passportjs.org/packages/passport-google-oauth/" target="_blank">passport-google-oauth</a>
+5. <a href="https://github.com/jaredhanson/passport-google-oauth2" target="_blank">passport-google-oauth2.0</a>
+6. <a href="https://console.developers.google.com" target="_blank">Google API</a>
+
 

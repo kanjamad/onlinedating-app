@@ -145,6 +145,7 @@ app.get('/auth/google/callback',passport.authenticate('google',{
     failureRedirect: '/'
 }));
 
+// logout
 app.get('/logout',(req,res) => {
     User.findById({_id:req.user._id})
     .then((user) => {
